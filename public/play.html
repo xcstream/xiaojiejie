@@ -88,6 +88,20 @@
                         dots = obj
                     })
                 })
+
+                fetch('/payadb',{
+                    method:"POST",
+                    credentials: 'include',
+                    headers: { 'Accept': 'application/json','Content-Type':'application/json'},
+                    body:JSON.stringify({
+                        name:vm.current
+                    })
+                }).then(function(res){
+                    res.json().then(function(obj){
+                        vm.namelist = obj.info
+                    })
+                })
+
             },
             select:function(name){
                 vm.current=name
@@ -123,7 +137,6 @@
                         dots=[]
 
                         vm.current=''+vm.addinput
-                        vm.load()
                         vm.addinput = ''
                     })
                 })

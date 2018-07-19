@@ -9,7 +9,7 @@ app.use('/save',(req,res)=>res.send(fs.writeFileSync('public/draw/'+req.body.nam
 app.use('/payadb',(req,res)=>{
 
     function modx(x) {
-        return x*2+200
+        return x*2+10
     }
 
     function mody(y) {

@@ -4,4 +4,6 @@ app.use('/list',(_,res)=>fs.readdir('public/draw',(err,files)=>res.send(err?{cod
 app.use('/save',(req,res)=>{
     var name = req.body.name
     var content = req.body.content
+    fs.writeFileSync('public/draw/'+name, content)
+    res.send({code:200})
 })

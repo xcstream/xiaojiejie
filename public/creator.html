@@ -37,7 +37,9 @@
                 if (last != ''){
                     line(dots[dots.length-1].mouseX, dots[dots.length-1].mouseY, mouseX, mouseY);
                 }
-                dots.push({mouseX:mouseX,mouseY:mouseY})
+                if(last.mouseX != mouseX && last.mouseY != mouseY){
+                    dots.push({mouseX:mouseX,mouseY:mouseY})
+                }
             }
         }
     }
@@ -47,11 +49,23 @@
     var app=new Vue({
         el:'#mtp',
         data:{
-            age:'1234',
+            age:'1234'
         },
         methods:{
             save:function(){
+                fetch('/save',{
+                    method:"POST",
+                    credentials: 'include',
+                    headers: { 'Accept': 'application/json','Content-Type':'application/json'},
+                    body:JSON.stringify({
+                        name:'彩虹'+'.json',
+                        content:JSON.stringify(dots)
+                    })
+                }).then(function(res){
+                    res.json().then(function(obj){
 
+                    })
+                })
             },
             clean:function () {
                 dots=[]

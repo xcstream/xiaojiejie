@@ -1,0 +1,17 @@
+{
+  "name": "xiaojiejie",
+  "version": "1.0.0",
+  "description": "huatuxiaogedexiaojiejie",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index"
+  },
+  "bin": "bin/xiaojiejie",
+  "author": "xcstream@vip.qq.com",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "express": "^4.16.3",
+    "serve-static": "^1.13.2"
+  }
+}

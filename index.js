@@ -1,0 +1,10 @@
+var express=require('express')
+var bodyParser=require("body-parser")
+var serveStatic=require('serve-static')
+var static=serveStatic('public')
+var app=express()
+app.use(bodyParser.json({ type: 'application/json' }))
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(static)
+app.listen(3400)
+console.log('http://localhost:3400')

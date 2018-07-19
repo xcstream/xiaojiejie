@@ -44,18 +44,18 @@
     function mousePressed() {
         dots.push('')
     }
-
     var app=new Vue({
         el:'#mtp',
         data:{
-            age:123,
+            age:'1234',
         },
         methods:{
             save:function(){
 
             },
             clean:function () {
-                
+                dots=[]
+                background(255)
             }
         }
 

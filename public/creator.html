@@ -11,14 +11,32 @@
     canvas{
         border: dashed 1px grey;
     }
+    .selected:{
+        background: greenyellow;
+    }
+    body{
+        min-width:650px;
+    }
 </style>
 <body>
 <div id="mtp">
     <div>
+        当前图片:{{current.replace('.json','')}}
         <el-button @click="clean">清空</el-button>
         <el-button @click="save">保存</el-button>
     </div>
+
     <div style="float:right; width:300px">
+        <div>
+            <el-input style="width:100px" v-model="addinput"></el-input>
+            <el-button @click="add">添加</el-button>
+        </div>
+        <span v-for="name in namelist" :class="{'selected':name==current}" @click="select(name)" style="cursor: pointer">
+            <el-tag>
+                {{name.replace('.json','')}}
+            </el-tag>
+        </span>
+
     </div>
 </div>
 <script>
@@ -46,24 +64,79 @@
     function mousePressed() {
         dots.push('')
     }
-    var app=new Vue({
+    var vm=new Vue({
         el:'#mtp',
         data:{
-            age:'1234'
+            namelist:[],
+            current:"",
+            addinput:'',
+        },
+        mounted:()=>{
+            setTimeout(function () {
+                vm.load()
+            },500)
         },
         methods:{
+            redraw:function(){
+                fetch('/draw/'+vm.current).then(function(res){
+                    res.json().then(function(obj){
+                        if(!obj.length) return
+                        background(255)
+                        clear()
+                        for (var i=0; i<obj.length-1; i++){
+                            console.log(obj[i].mouseX,  obj[i].mouseY, obj[i+1].mouseX,obj[i+1].mouseY)
+                            line(obj[i].mouseX,  obj[i].mouseY, obj[i+1].mouseX,obj[i+1].mouseY)
+                        }
+                    })
+                })
+            },
+            select:function(name){
+                vm.current=name
+                vm.redraw();
+            },
+            load:function(){
+                fetch('/list',{
+                    method:"POST",
+                    credentials: 'include',
+                    headers: { 'Accept': 'application/json','Content-Type':'application/json'},
+                }).then(function(res){
+                    res.json().then(function(obj){
+                        console.log(obj)
+                        vm.namelist = obj.info
+                    })
+                })
+            },
             save:function(){
+                if (!vm.current )return
                 fetch('/save',{
                     method:"POST",
                     credentials: 'include',
                     headers: { 'Accept': 'application/json','Content-Type':'application/json'},
                     body:JSON.stringify({
-                        name:'彩虹'+'.json',
+                        name:vm.current,
                         content:JSON.stringify(dots)
                     })
                 }).then(function(res){
                     res.json().then(function(obj){
 
+                    })
+                })
+            },
+            add:function(){
+                if(!vm.addinput) return;
+                fetch('/save',{
+                    method:"POST",
+                    credentials: 'include',
+                    headers: { 'Accept': 'application/json','Content-Type':'application/json'},
+                    body:JSON.stringify({
+                        name: vm.addinput+'.json',
+                        content:'[]'
+                    })
+                }).then(function(res){
+                    res.json().then(function(obj){
+                        vm.current=''+vm.addinput
+                        vm.load()
+                        vm.addinput = ''
                     })
                 })
             },

@@ -3,15 +3,66 @@
     <title>画图</title>
     <meta charset="UTF-8">
     <script src="https://cdn.bootcss.com/p5.js/0.6.0/p5.min.js"></script>
+    <script src="https://cdn.bootcss.com/vue/2.5.17-beta.0/vue.min.js"></script>
+    <link href="https://cdn.bootcss.com/element-ui/2.4.0/theme-chalk/index.css" rel="stylesheet">
+    <script src="https://cdn.bootcss.com/element-ui/2.4.0/index.js"></script>
 </head>
-<body>
-<button>清空</button>
-<button>保存</button>
-<canvas>
+<style>
+    canvas{
+        border: dashed 1px grey;
+    }
+</style>
+<body>11
+<div id="mtp">
+    <div>11
+        <el-button @click="clean">清空</el-button>
+        <el-button @click="save">保存</el-button>
 
-</canvas>
+    </div>
 
+    <div style="float:right; width:300px">
+
+    </div>
+</div>
 <script>
+    function setup() {
+        createCanvas(320, 480);
+        stroke(0);
+        frameRate(60);
+    }
+    var dots = [];
+    function draw() {
+        if(mouseIsPressed){
+            if(dots.length==0){
+                dots.push({mouseX:mouseX,mouseY:mouseY})
+            }else{
+                var last = dots[dots.length-1]
+                if (last != ''){
+                    line(dots[dots.length-1].mouseX, dots[dots.length-1].mouseY, mouseX, mouseY);
+                }
+                dots.push({mouseX:mouseX,mouseY:mouseY})
+            }
+        }
+    }
+    function mousePressed() {
+        dots.push('')
+    }
+
+    var app=new Vue({
+        el:'#mtp',
+        data:{
+            age:123,
+        },
+        methods:{
+            save:function(){
+
+            },
+            clean:function () {
+                
+            }
+        }
+
+    })
 </script>
 
 </body>

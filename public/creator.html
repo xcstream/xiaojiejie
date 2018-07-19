@@ -21,7 +21,8 @@
 <body>
 <div id="mtp">
     <div>
-        当前图片:{{current.replace('.json','')}}
+        当前图片:{{current}}
+        <span v-if="!current">(先载入或者添加一个图片)</span>
         <el-button @click="clean">清空</el-button>
         <el-button @click="save">保存</el-button>
     </div>
@@ -33,7 +34,7 @@
         </div>
         <span v-for="name in namelist" :class="{'selected':name==current}" @click="select(name)" style="cursor: pointer">
             <el-tag>
-                {{name.replace('.json','')}}
+                {{name}}
             </el-tag>
         </span>
 
@@ -44,10 +45,15 @@
         createCanvas(320, 480);
         stroke(0);
         frameRate(60);
+        textSize(16);
+        text('从右侧，载入或者添加一个图片', 40, 130)
     }
     var dots = [];
     function draw() {
         if(mouseIsPressed){
+            if(!vm.current){
+                return
+            }
             if(dots.length==0){
                 dots.push({mouseX:mouseX,mouseY:mouseY})
             }else{
@@ -63,6 +69,8 @@
     }
     function mousePressed() {
         dots.push('')
+        if(!vm.current){
+        }
     }
     var vm=new Vue({
         el:'#mtp',
@@ -78,15 +86,15 @@
         },
         methods:{
             redraw:function(){
+                clear()
                 fetch('/draw/'+vm.current).then(function(res){
                     res.json().then(function(obj){
                         if(!obj.length) return
                         background(255)
-                        clear()
                         for (var i=0; i<obj.length-1; i++){
-                            console.log(obj[i].mouseX,  obj[i].mouseY, obj[i+1].mouseX,obj[i+1].mouseY)
                             line(obj[i].mouseX,  obj[i].mouseY, obj[i+1].mouseX,obj[i+1].mouseY)
                         }
+                        dots = obj
                     })
                 })
             },
@@ -114,10 +122,13 @@
                     body:JSON.stringify({
                         name:vm.current,
                         content:JSON.stringify(dots)
+
                     })
                 }).then(function(res){
                     res.json().then(function(obj){
-
+                        if(obj.code==200){
+                            vm.$message('已保存',500)
+                        }
                     })
                 })
             },
@@ -128,11 +139,14 @@
                     credentials: 'include',
                     headers: { 'Accept': 'application/json','Content-Type':'application/json'},
                     body:JSON.stringify({
-                        name: vm.addinput+'.json',
+                        name: vm.addinput,
                         content:'[]'
                     })
                 }).then(function(res){
                     res.json().then(function(obj){
+                        clear()
+                        dots=[]
+
                         vm.current=''+vm.addinput
                         vm.load()
                         vm.addinput = ''

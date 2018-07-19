@@ -12,7 +12,7 @@
         border: dashed 1px grey;
     }
     .selected{
-        border: greenyellow;
+        background: greenyellow;
     }
     body{
         min-width:650px;
@@ -22,22 +22,13 @@
 <div id="mtp">
     <div>
         当前图片:{{current}}
-        <span v-if="!current">(先载入或者添加一个图片)</span>
-        <el-button @click="clean">清空</el-button>
-        <el-button @click="save">保存</el-button>
     </div>
-
     <div style="float:right; width:300px">
-        <div>
-            <el-input style="width:100px" v-model="addinput"></el-input>
-            <el-button @click="add">添加</el-button>
-        </div>
         <span v-for="name in namelist" :class="{'selected':name==current}" @click="select(name)" style="cursor: pointer">
             <el-tag :type="name==current?'success':''">
                 {{name}}
             </el-tag>
         </span>
-
     </div>
 </div>
 <script>
@@ -114,23 +105,7 @@
                 })
             },
             save:function(){
-                if (!vm.current )return
-                fetch('/save',{
-                    method:"POST",
-                    credentials: 'include',
-                    headers: { 'Accept': 'application/json','Content-Type':'application/json'},
-                    body:JSON.stringify({
-                        name:vm.current,
-                        content:JSON.stringify(dots)
 
-                    })
-                }).then(function(res){
-                    res.json().then(function(obj){
-                        if(obj.code==200){
-                            vm.$message('已保存',500)
-                        }
-                    })
-                })
             },
             add:function(){
                 if(!vm.addinput) return;

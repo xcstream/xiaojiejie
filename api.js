@@ -1,12 +1,11 @@
 var fs=require('fs')
 
-const { spawn } = require('child_process');
-
+const spawn = require('cross-spawn');
 
 app.use('/list',(_,res)=>fs.readdir('public/draw',(err,files)=>res.send(err?{code:500,msg:err}:{code:200,info:files})))
 app.use('/save',(req,res)=>res.send(fs.writeFileSync('public/draw/'+req.body.name,req.body.content)||{code:200}))
 
-app.use('/payadb',(req,res)=>{
+app.use('/playadb',(req,res)=>{
 
     function modx(x) {
         return x*2+10
@@ -20,7 +19,9 @@ app.use('/payadb',(req,res)=>{
     var text = fs.readFileSync('public/draw/' +name).toString()
     console.log(text)
 
+
     var obj = JSON.parse(text)
+    try{
     const adb = spawn('adb', ['shell']);
     var cmd = ''
 
@@ -51,5 +52,9 @@ app.use('/payadb',(req,res)=>{
     });
 
     res.send({code:200})
+    }catch (e){
 
+        res.send({code:500,msg:'检查adb是否正常'})
+
+    }
 })
